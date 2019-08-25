@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(value = "/logins")
+@RequestMapping(value = "/login")
 public class LoginAndSignUpPage {
     @Autowired
     private UserRepository userRepository;
