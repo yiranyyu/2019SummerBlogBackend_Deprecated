@@ -78,6 +78,7 @@ public class BlogApplication implements CommandLineRunner {
 
         for (int i = 0; i < 100; ++i) {
             Post toAdd = new Post("Alice", "title_" + i, "content", Date.getNow());
+            toAdd.publish();
             addTagToPost(toAdd, "" + (i % 10));
             postRepository.save(toAdd);
         }
