@@ -60,6 +60,10 @@ public class BlogApplication implements CommandLineRunner {
         post1.addTag(new Tag("normal"));
         post1.publish();
 
+        for (int i = 0; i < 100; ++i) {
+            postRepository.save(new Post("Alice", "title_" + i, "content", Date.getNow()));
+        }
+
         postRepository.save(post1);
         postRepository.save(new Post("Alice", "titleB", "content", Date.getNow()));
 
