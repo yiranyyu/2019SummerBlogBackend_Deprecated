@@ -1,22 +1,14 @@
 package buaasoft.blog.mapping;
 
 import buaasoft.blog.api.UserRepository;
-import buaasoft.blog.entity.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
 
 @Controller
 public class EditPersonalInfoPage {
-    private static final Logger log = LoggerFactory.getLogger(PersonalPostList.class);
+    private static final Logger log = LoggerFactory.getLogger(UserPage.class);
 
     @Autowired
     private UserRepository userRepository;

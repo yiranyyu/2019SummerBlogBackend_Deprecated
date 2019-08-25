@@ -30,8 +30,10 @@ public class BlogApplication implements CommandLineRunner {
 
     private void testUserRepository() {
         userRepository.deleteAll();
+        User alice = new User("Alice", "123", "hhh");
+        alice.addFollowing("Bob");
 
-        userRepository.save(new User("Alice", "123", "hhh"));
+        userRepository.save(alice);
         userRepository.save(new User("Bob", "abc", "hhh", "hh"));
 
         System.out.println("Users found with findAll():");
@@ -56,6 +58,11 @@ public class BlogApplication implements CommandLineRunner {
         Post post1 = new Post("Alice", "titleA", "content", Date.getNow());
         post1.addComment(new Comment("Bob", "Bob", Date.getNow()));
         post1.addTag(new Tag("normal"));
+        post1.publish();
+
+        for (int i = 0; i < 100; ++i) {
+            postRepository.save(new Post("Alice", "title_" + i, "content", Date.getNow()));
+        }
 
         postRepository.save(post1);
         postRepository.save(new Post("Alice", "titleB", "content", Date.getNow()));
