@@ -13,6 +13,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Optional;
+
 @SpringBootApplication
 public class BlogApplication implements CommandLineRunner {
     @Autowired
@@ -52,16 +54,32 @@ public class BlogApplication implements CommandLineRunner {
         System.out.println("End");
     }
 
+    public void addTagToPost(Post post, String tagName) {
+        post.addTag(tagName);
+        Optional<Tag> dbResult = tagRepository.findByName(tagName);
+        Tag tag;
+
+        if (dbResult.isEmpty()) {
+            tag = new Tag(tagName);
+        } else {
+            tag = dbResult.get();
+        }
+        tag.addPostID(post.getId());
+        tagRepository.save(tag);
+    }
+
+
     private void testPostRepository() {
         postRepository.deleteAll();
 
         Post post1 = new Post("Alice", "titleA", "content", Date.getNow());
         post1.addComment(new Comment("Bob", "Bob", Date.getNow()));
-        post1.addTag(new Tag("normal"));
         post1.publish();
 
         for (int i = 0; i < 100; ++i) {
-            postRepository.save(new Post("Alice", "title_" + i, "content", Date.getNow()));
+            Post toAdd = new Post("Alice", "title_" + i, "content", Date.getNow());
+            addTagToPost(toAdd, "" + (i % 10));
+            postRepository.save(toAdd);
         }
 
         postRepository.save(post1);
@@ -80,23 +98,9 @@ public class BlogApplication implements CommandLineRunner {
         System.out.println("-------------------------------");
     }
 
-    private void testTagRepository() {
-        tagRepository.deleteAll();
-
-        tagRepository.save(new Tag("Tag1"));
-        tagRepository.save(new Tag("Tag2"));
-
-        System.out.println("Tag found with findAll():");
-        for (Tag tag : tagRepository.findAll()) {
-            System.out.println(tag);
-        }
-        System.out.println("-------------------------------");
-    }
-
     private void testDatabase() {
         testUserRepository();
         testPostRepository();
-        testTagRepository();
     }
 
     @Override

@@ -95,8 +95,8 @@ public class Post {
         return tagNames;
     }
 
-    public void addTag(Tag tag) {
-        tagNames.add(tag.getName());
+    public void addTag(String tagName) {
+        tagNames.add(tagName);
         lastModifiedDate = Date.getNow();
     }
 
