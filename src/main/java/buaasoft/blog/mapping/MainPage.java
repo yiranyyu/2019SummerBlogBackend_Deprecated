@@ -35,6 +35,20 @@ public class MainPage {
     @Autowired
     private SessionRepository sessionRepository;
 
+    static String userNotFoundResponse(String username) {
+        JSONObject response = new JSONObject();
+        response.put(Constants.STATUS, false);
+        response.put(Constants.errorMessage, "Cannot find user " + username);
+        return response.toJSONString();
+    }
+
+    private static String passwordErrorResponse() {
+        JSONObject response = new JSONObject();
+        response.put(Constants.STATUS, false);
+        response.put(Constants.errorMessage, "Invalid password");
+        return response.toJSONString();
+    }
+
     @GetMapping("/posts")
     @ResponseBody
     public String recommendedPosts(@RequestParam(value = "numberOfPosts", required = false) Integer numberOfPosts) {
@@ -42,7 +56,6 @@ public class MainPage {
         if (numberOfPosts == null) {
             numberOfPosts = 10;
         }
-        System.out.println("Receive home page get with number = " + numberOfPosts);
 
         List<Post> posts = postRepository.findAllByAsDraftIsFalse();
         numberOfPosts = Math.min(numberOfPosts, posts.size());
@@ -53,7 +66,7 @@ public class MainPage {
     @GetMapping("/userInfo")
     @ResponseBody
     public String userInfo(@RequestParam(value = "username", required = true) String username) {
-        System.out.println("Receive get for /userInfo of " + username);
+        System.out.println("Receive get of /userInfo of " + username);
         Optional<User> dbResult = userRepository.findByUserName(username);
         if (dbResult.isEmpty()) {
             return userNotFoundResponse(username);
@@ -72,20 +85,19 @@ public class MainPage {
     @GetMapping(path = "/login")
     @ResponseBody
     public String loginGet() {
-        System.out.println("Receive get for /login");
+        System.out.println("Receive get of /login");
         JSONObject response = new JSONObject();
         response.put(Constants.STATUS, true);
         response.put("value", "This is home of login page");
         return response.toJSONString();
     }
 
-
     @PostMapping(path = "/login")
     @ResponseBody
     public String loginByPost(@RequestParam(value = "username", required = true) String username,
                               @RequestParam(value = "password", required = true) String password,
                               @RequestParam(value = "token", required = false) String token) {
-        System.out.printf("Receive post for /login with {name: %s, password: %s, token:%s}\n", username, password, token);
+        System.out.printf("Receive post of /login with {name: %s, password: %s, token:%s}\n", username, password, token);
         Optional<User> dbResult = userRepository.findByUserName(username);
 
         if (dbResult.isEmpty()) {
@@ -105,7 +117,7 @@ public class MainPage {
     public String signUp(@RequestParam(value = "username", required = true) String username,
                          @RequestParam(value = "nickname", required = true) String nickname,
                          @RequestParam(value = "password", required = true) String password) {
-        System.out.printf("Receive post for sign up with {name: %s, password: %s}\n", username, password);
+        System.out.printf("Receive post of sign up with {name: %s, password: %s}\n", username, password);
         Optional<User> dbResult = userRepository.findByUserName(username);
 
         if (dbResult.isEmpty()) {
@@ -113,21 +125,6 @@ public class MainPage {
         } else {
             return userAlreadyExistResponse(username);
         }
-    }
-
-
-    private String userNotFoundResponse(String username) {
-        JSONObject response = new JSONObject();
-        response.put(Constants.STATUS, false);
-        response.put(Constants.errorMessage, "Cannot find user " + username);
-        return response.toJSONString();
-    }
-
-    private String passwordErrorResponse() {
-        JSONObject response = new JSONObject();
-        response.put(Constants.STATUS, false);
-        response.put(Constants.errorMessage, "Invalid password");
-        return response.toJSONString();
     }
 
     private String loginSucceedResponse(User user, String username, String token) {
