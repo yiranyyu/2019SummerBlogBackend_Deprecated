@@ -3,6 +3,7 @@ package buaasoft.blog.mapping;
 import buaasoft.blog.api.PostRepository;
 import buaasoft.blog.api.UserRepository;
 import buaasoft.blog.entity.User;
+import buaasoft.blog.utils.Responses;
 import com.alibaba.fastjson.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class UserPage {
         System.out.println("Receive get of /followings with username = " + username);
         Optional<User> dbResult = userRepository.findByUserName(username);
         if (dbResult.isEmpty()) {
-            return MainPage.userNotFoundResponse(username);
+            return Responses.userNotFoundResponse(username);
         } else {
             HashSet<String> followings = dbResult.get().getFollowingUserNames();
             ArrayList<User> followingUsers = new ArrayList<>(followings.size());

@@ -6,9 +6,7 @@ import buaasoft.blog.api.UserRepository;
 import buaasoft.blog.entity.Post;
 import buaasoft.blog.entity.Tag;
 import buaasoft.blog.entity.User;
-import buaasoft.blog.utils.Constants;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+import static buaasoft.blog.utils.Responses.tagNotFoundResponse;
 
 @Controller
 @RequestMapping("/search")
@@ -27,14 +30,6 @@ public class SearchPage {
     private TagRepository tagRepository;
     @Autowired
     private UserRepository userRepository;
-
-    private String tagNotFoundResponse(String tagName) {
-        JSONObject response = new JSONObject();
-        response.put(Constants.STATUS, false);
-        response.put(Constants.errorMessage, "Cannot find tag " + tagName);
-        return response.toJSONString();
-    }
-
 
     @GetMapping("/tag")
     @ResponseBody

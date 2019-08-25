@@ -8,6 +8,7 @@ import buaasoft.blog.entity.Session;
 import buaasoft.blog.entity.User;
 import buaasoft.blog.utils.Constants;
 import buaasoft.blog.utils.Date;
+import buaasoft.blog.utils.Responses;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Optional;
+
+import static buaasoft.blog.utils.Responses.userNotFoundResponse;
 
 /**
  * @author Yirany
@@ -34,13 +37,6 @@ public class MainPage {
     private UserRepository userRepository;
     @Autowired
     private SessionRepository sessionRepository;
-
-    static String userNotFoundResponse(String username) {
-        JSONObject response = new JSONObject();
-        response.put(Constants.STATUS, false);
-        response.put(Constants.errorMessage, "Cannot find user " + username);
-        return response.toJSONString();
-    }
 
     private static String passwordErrorResponse() {
         JSONObject response = new JSONObject();

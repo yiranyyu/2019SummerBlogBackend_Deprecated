@@ -23,17 +23,17 @@ public class EditorPage {
     private TagRepository tagRepository;
 
 
-    public void addTagToPost(Post post, String tagName) {
-        post.addTag(tagName);
-        Optional<Tag> dbResult = tagRepository.findByName(tagName);
-        Tag tag;
-
-        if (dbResult.isEmpty()) {
-            tag = new Tag(tagName);
-        } else {
-            tag = dbResult.get();
-        }
-        tag.addPostID(post.getId());
-        tagRepository.save(tag);
-    }
+//    public void addTagToPost(Post post, String tagName) {
+//        post.addTag(tagName);
+//        Optional<Tag> dbResult = tagRepository.findByName(tagName);
+//        Tag tag;
+//
+//        if (dbResult.isEmpty()) {
+//            tag = new Tag(tagName);
+//        } else {
+//            tag = dbResult.get();
+//        }
+//        tag.addPostID(post.getId());
+//        tagRepository.save(tag);
+//    }
 }
