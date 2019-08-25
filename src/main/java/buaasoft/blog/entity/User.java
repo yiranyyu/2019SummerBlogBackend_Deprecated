@@ -26,15 +26,6 @@ public class User implements Visitor {
     private ArrayList<Long> postIDs;
     private HashSet<String> followingUserNames;
     private String avatar;
-
-    public String getSessionID() {
-        return sessionID;
-    }
-
-    public void setSessionID(String sessionID) {
-        this.sessionID = sessionID;
-    }
-
     private String sessionID;
 
     public User() {
@@ -45,6 +36,7 @@ public class User implements Visitor {
         this(userName, password, nickName, DEFAULT_AVATAR);
     }
 
+
     public User(String userName, String password, String nickName, String avatar) {
         this.userName = userName;
         this.passwordHash = generatePasswordHash(password);
@@ -52,6 +44,14 @@ public class User implements Visitor {
         this.avatar = avatar;
         this.postIDs = new ArrayList<>();
         this.followingUserNames = new HashSet<>();
+    }
+
+    public String getSessionID() {
+        return sessionID;
+    }
+
+    public void setSessionID(String sessionID) {
+        this.sessionID = sessionID;
     }
 
     private String generatePasswordHash(String x) {

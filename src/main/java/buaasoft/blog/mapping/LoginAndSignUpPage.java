@@ -1,6 +1,8 @@
 package buaasoft.blog.mapping;
 
+import buaasoft.blog.api.SessionRepository;
 import buaasoft.blog.api.UserRepository;
+import buaasoft.blog.entity.Session;
 import buaasoft.blog.entity.User;
 import buaasoft.blog.utils.Constants;
 import buaasoft.blog.utils.Date;
@@ -17,6 +19,9 @@ public class LoginAndSignUpPage {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SessionRepository sessionRepository;
+
     private String generateToken(String userName) {
         return userName + " " + Date.getNow();
     }
@@ -25,8 +30,12 @@ public class LoginAndSignUpPage {
     @ResponseBody
     public String loginGet() {
         System.out.println("Receive login get");
-        return "This is home of login page";
+        JSONObject response = new JSONObject();
+        response.put(Constants.STATUS, true);
+        response.put("value", "This is home of login page");
+        return response.toJSONString();
     }
+
 
     @PostMapping(path = "")
     @ResponseBody
@@ -35,24 +44,17 @@ public class LoginAndSignUpPage {
                               @RequestParam(value = "token", required = false) String token) {
         System.out.printf("Receive login post {name: %s, password: %s, token:%s}\n", username, password, token);
         Optional<User> dbResult = userRepository.findByUserName(username);
-        JSONObject response = new JSONObject();
 
         if (dbResult.isEmpty()) {
-            response.put(Constants.STATUS, true);
+            return userNotFoundResponse(username);
         } else {
             User user = dbResult.get();
             if (user.checkPassword(password)) {
-                if (token == null) {
-                    token = generateToken(username);
-                }
-                response.put(Constants.STATUS, true);
-                response.put("token", token);
+                return loginSucceedResponse(user, username, token);
             } else {
-                response.put(Constants.STATUS, false);
-                response.put(Constants.errorMessage, "Invalid password" + password);
+                return passwordErrorResponse();
             }
         }
-        return response.toJSONString();
     }
 
     @PostMapping(path = "/signUp")
@@ -62,16 +64,57 @@ public class LoginAndSignUpPage {
                          @RequestParam(value = "password", required = true) String password) {
         System.out.printf("Receive sign up post {name: %s, password: %s}\n", username, password);
         Optional<User> dbResult = userRepository.findByUserName(username);
-        JSONObject response = new JSONObject();
 
         if (dbResult.isEmpty()) {
-            User user = new User(username, password, nickname);
-            userRepository.save(user);
-            response.put(Constants.STATUS, true);
+            return signUpSucceedResponse(username, password, nickname);
         } else {
-            response.put(Constants.STATUS, false);
+            return userAlreadyExistResponse(username);
         }
+    }
+
+
+    private String userNotFoundResponse(String username) {
+        JSONObject response = new JSONObject();
+        response.put(Constants.STATUS, false);
+        response.put(Constants.errorMessage, "Cannot find user " + username);
         return response.toJSONString();
     }
 
+    private String passwordErrorResponse() {
+        JSONObject response = new JSONObject();
+        response.put(Constants.STATUS, false);
+        response.put(Constants.errorMessage, "Invalid password");
+        return response.toJSONString();
+    }
+
+    private String loginSucceedResponse(User user, String username, String token) {
+        JSONObject response = new JSONObject();
+        if (token == null) {
+            token = generateToken(username);
+            if (user.getSessionID() != null) {
+                String sessionID = user.getSessionID();
+                sessionRepository.deleteById(sessionID);
+            }
+            user.setSessionID(token);
+            sessionRepository.save(new Session(user, ""));
+            response.put("token", token);
+        }
+        response.put(Constants.STATUS, true);
+        return response.toJSONString();
+    }
+
+    private String signUpSucceedResponse(String username, String password, String nickname) {
+        JSONObject response = new JSONObject();
+        User user = new User(username, password, nickname);
+        userRepository.save(user);
+        response.put(Constants.STATUS, true);
+        return response.toJSONString();
+    }
+
+    private String userAlreadyExistResponse(String username) {
+        JSONObject response = new JSONObject();
+        response.put(Constants.STATUS, false);
+        response.put(Constants.errorMessage, "User " + username + " already exists");
+        return response.toJSONString();
+    }
 }
