@@ -52,9 +52,7 @@ public class LoginAndSignUpPage {
                 response.put(Constants.errorMessage, "Invalid password" + password);
             }
         }
-        System.out.println("sdf" + response.toJSONString());
-        return "hhh";
-//        return response.toJSONString();
+        return response.toJSONString();
     }
 
     @PostMapping(path = "/signUp")
