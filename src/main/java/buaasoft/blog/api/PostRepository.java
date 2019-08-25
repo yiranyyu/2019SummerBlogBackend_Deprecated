@@ -3,6 +3,7 @@ package buaasoft.blog.api;
 import buaasoft.blog.entity.Post;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -31,4 +32,11 @@ public interface PostRepository extends MongoRepository<Post, Long> {
      * @return published posts of <code>author</code>
      */
     Iterable<Post> findAllByAuthorNameAndAsDraftIsFalse(String authorName);
+
+    /**
+     * Find all published posts
+     *
+     * @return all published posts
+     */
+    List<Post> findAllByAsDraftIsFalse();
 }

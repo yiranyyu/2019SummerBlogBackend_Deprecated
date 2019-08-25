@@ -56,6 +56,7 @@ public class BlogApplication implements CommandLineRunner {
         Post post1 = new Post("Alice", "titleA", "content", Date.getNow());
         post1.addComment(new Comment("Bob", "Bob", Date.getNow()));
         post1.addTag(new Tag("normal"));
+        post1.publish();
 
         postRepository.save(post1);
         postRepository.save(new Post("Alice", "titleB", "content", Date.getNow()));
