@@ -31,7 +31,7 @@ public class BlogApplication implements CommandLineRunner {
     }
 
     private void testUserRepository() {
-        userRepository.deleteAll();
+//        userRepository.deleteAll();
         User alice = new User("Alice", "123", "hhh");
         alice.addFollowing("Bob");
 
@@ -54,23 +54,8 @@ public class BlogApplication implements CommandLineRunner {
         System.out.println("End");
     }
 
-    public void addTagToPost(Post post, String tagName) {
-        post.addTag(tagName);
-        Optional<Tag> dbResult = tagRepository.findByName(tagName);
-        Tag tag;
-
-        if (dbResult.isEmpty()) {
-            tag = new Tag(tagName);
-        } else {
-            tag = dbResult.get();
-        }
-        tag.addPostID(post.getId());
-        tagRepository.save(tag);
-    }
-
-
     private void testPostRepository() {
-        postRepository.deleteAll();
+//        postRepository.deleteAll();
 
         Post post1 = new Post("Alice", "titleA", "content", Date.getNow());
         post1.addComment(new Comment("Bob", "Bob", Date.getNow()));
@@ -79,7 +64,7 @@ public class BlogApplication implements CommandLineRunner {
         for (int i = 0; i < 100; ++i) {
             Post toAdd = new Post("Alice", "title_" + i, "content", Date.getNow());
             toAdd.publish();
-            addTagToPost(toAdd, "" + (i % 10));
+//            addTagToPost(toAdd, "" + (i % 10));
             postRepository.save(toAdd);
         }
 
@@ -101,7 +86,7 @@ public class BlogApplication implements CommandLineRunner {
 
     private void testDatabase() {
         testUserRepository();
-        testPostRepository();
+//        testPostRepository();
     }
 
     @Override

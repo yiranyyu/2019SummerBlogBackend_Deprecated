@@ -1,6 +1,5 @@
 package buaasoft.blog.entity;
 
-import buaasoft.blog.utils.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Session")
 public class Session {
     @Id
-    private String id;
+    private String token;
 
     private String editorContext;
 
@@ -22,12 +21,11 @@ public class Session {
     /**
      * Please delete the origin session from database before assign a new session to user
      *
-     * @param user          User to have this session
-     * @param editorContext last modified editor context
+     * @param token token of session
+     * @param editorContext editor context
      */
-    public Session(User user, String editorContext) {
-        id = Date.getNow() + user.getUserName();
-        user.setSessionID(id);
+    public Session(String token, String editorContext) {
+        this.token = token;
         this.editorContext = editorContext;
     }
 
@@ -40,7 +38,7 @@ public class Session {
 
     }
 
-    public String getId() {
-        return id;
+    public String getToken() {
+        return token;
     }
 }

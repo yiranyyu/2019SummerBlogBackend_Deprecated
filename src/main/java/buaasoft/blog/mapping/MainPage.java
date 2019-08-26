@@ -8,7 +8,6 @@ import buaasoft.blog.entity.Session;
 import buaasoft.blog.entity.User;
 import buaasoft.blog.utils.Constants;
 import buaasoft.blog.utils.Date;
-import buaasoft.blog.utils.Responses;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,8 +130,8 @@ public class MainPage {
                 String sessionID = user.getSessionID();
                 sessionRepository.deleteById(sessionID);
             }
+            sessionRepository.save(new Session(token, ""));
             user.setSessionID(token);
-            sessionRepository.save(new Session(user, ""));
             response.put("token", token);
         }
         response.put(Constants.STATUS, true);
