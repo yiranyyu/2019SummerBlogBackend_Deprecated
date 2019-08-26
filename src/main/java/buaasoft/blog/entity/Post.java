@@ -26,11 +26,9 @@ public class Post {
     private Date lastModifiedDate;
     private ArrayList<Comment> comments;
     private boolean asDraft;
+    private long views;
 
     public Post() {
-        id = 0L;
-        authorName = "";
-        postDate = Date.getNow();
     }
 
     public Post(String author, String title, String content, Date postDate) {
@@ -54,7 +52,6 @@ public class Post {
         this.comments = new ArrayList<>();
         this.id = nextPostId++;
         this.asDraft = true;
-//        System.out.println("##################### Post ctor called #####################");
     }
 
     public boolean isAsDraft() {
@@ -133,11 +130,15 @@ public class Post {
      *
      * @return True is the post is not published yet before the calling
      */
-    public boolean publish() {
+    boolean publish() {
         if (asDraft) {
             asDraft = false;
             return true;
         }
         return false;
+    }
+
+    public void addView() {
+        views += 1;
     }
 }

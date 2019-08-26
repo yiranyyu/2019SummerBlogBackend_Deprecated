@@ -22,11 +22,4 @@ public class PostTest {
         setPost();
         assertTrue(post.isAsDraft());
     }
-
-    @Test
-    public void publish() {
-        setPost();
-        post.publish();
-        assertFalse(post.isAsDraft());
-    }
 }

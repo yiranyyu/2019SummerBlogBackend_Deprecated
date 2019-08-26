@@ -24,12 +24,13 @@ public class User implements Visitor {
     private String passwordHash;
     private String nickName;
     private ArrayList<Long> postIDs;
+    private HashSet<Long> likePosts;
     private HashSet<String> followingUserNames;
     private String avatar;
     private String sessionID;
 
+
     public User() {
-        userName = "";
     }
 
     public User(String userName, String password, String nickName) {
@@ -43,7 +44,20 @@ public class User implements Visitor {
         this.nickName = nickName;
         this.avatar = avatar;
         this.postIDs = new ArrayList<>();
+        this.likePosts = new HashSet<>();
         this.followingUserNames = new HashSet<>();
+    }
+
+    public void likePost(long toLike) {
+        likePosts.add(toLike);
+    }
+
+    public void unlikePost(long toUnlike) {
+        likePosts.remove(toUnlike);
+    }
+
+    public boolean isLikingPost(long postID) {
+        return likePosts.contains(postID);
     }
 
     public String getSessionID() {
@@ -76,6 +90,15 @@ public class User implements Visitor {
 
     public void removePost(long toRemove) {
         postIDs.remove(toRemove);
+    }
+
+    public Post publishPost(Post post) {
+        if (postIDs.contains(post.getId())) {
+            post.publish();
+        } else {
+            throw new IllegalArgumentException("Post " + post + " is not draft of " + userName);
+        }
+        return post;
     }
 
     public ArrayList<Long> getPostIDs() {

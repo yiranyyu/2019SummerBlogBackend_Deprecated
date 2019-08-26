@@ -5,15 +5,12 @@ import buaasoft.blog.api.TagRepository;
 import buaasoft.blog.api.UserRepository;
 import buaasoft.blog.entity.Comment;
 import buaasoft.blog.entity.Post;
-import buaasoft.blog.entity.Tag;
 import buaasoft.blog.entity.User;
 import buaasoft.blog.utils.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.Optional;
 
 @SpringBootApplication
 public class BlogApplication implements CommandLineRunner {
@@ -57,13 +54,16 @@ public class BlogApplication implements CommandLineRunner {
     private void testPostRepository() {
 //        postRepository.deleteAll();
 
+        User author = new User("Alice", "123", "hh");
         Post post1 = new Post("Alice", "titleA", "content", Date.getNow());
         post1.addComment(new Comment("Bob", "Bob", Date.getNow()));
-        post1.publish();
+        author.addPost(post1.getId());
+        author.publishPost(post1);
 
         for (int i = 0; i < 100; ++i) {
             Post toAdd = new Post("Alice", "title_" + i, "content", Date.getNow());
-            toAdd.publish();
+            author.addPost(toAdd.getId());
+            author.publishPost(toAdd);
 //            addTagToPost(toAdd, "" + (i % 10));
             postRepository.save(toAdd);
         }

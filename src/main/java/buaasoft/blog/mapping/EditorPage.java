@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
 
@@ -42,6 +43,7 @@ public class EditorPage {
 
     // TODO: Test this function
     @PostMapping("/session")
+    @ResponseBody
     public String storeSession(@RequestParam(value = "token", required = true) String token,
                                @RequestParam(value = "context", required = true) String context) {
         System.out.printf("Receive post of /editor/session with context = {%s...}", context.substring(0, Math.min(10, context.length())));

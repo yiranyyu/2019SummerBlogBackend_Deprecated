@@ -11,10 +11,7 @@ import buaasoft.blog.utils.Responses;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -34,13 +31,83 @@ public class PostPage {
 
     @GetMapping("")
     @ResponseBody
-    public String getPost(@RequestParam(value = "postID") Long postID) {
-        System.out.println("Receive get of /post with postID " + postID);
+    public String getPost(@RequestParam(value = "username") String username,
+                          @RequestParam(value = "postID") Long postID) {
+        System.out.printf("Receive get of /post with postID %d for %s\n", postID, username);
+        Optional<Post> dbResult = postRepository.findById(postID);
+        Optional<User> x = userRepository.findByUserName(username);
+        if (x.isEmpty()) {
+            return Responses.userNotFoundResponse(username);
+        } else if (dbResult.isEmpty()) {
+            return Responses.postNotFoundResponse(postID);
+        } else {
+            Post post = dbResult.get();
+            if (!x.get().getUserName().equals(post.getAuthorName())) {
+                post.addView();
+                postRepository.save(post);
+            }
+            return JSONObject.toJSONString(dbResult.get());
+        }
+    }
+
+    @GetMapping("/like")
+    @ResponseBody
+    public String checkIfLikePost(@RequestParam(value = "username") String username,
+                                  @RequestParam(value = "postID") Long postID) {
+        System.out.printf("Receive get of /post/like with {username: %s, postID: %s}\n", username, postID);
+        Optional<User> dbResult = userRepository.findByUserName(username);
+        Optional<Post> postResult = postRepository.findById(postID);
+        if (dbResult.isEmpty()) {
+            return Responses.userNotFoundResponse(username);
+        } else if (postResult.isEmpty()) {
+            return Responses.postNotFoundResponse(postID);
+        } else {
+            JSONObject response = new JSONObject();
+            response.put(Constants.STATUS, true);
+            response.put("like", dbResult.get().isLikingPost(postID));
+            return response.toJSONString();
+        }
+    }
+
+    @PostMapping("/like")
+    @ResponseBody
+    public String likePost(@RequestParam(value = "username") String username,
+                           @RequestParam(value = "postID") Long postID) {
+        System.out.printf("Receive post of /post/like with {username: %s, postID: %s}\n", username, postID);
+        Optional<User> dbResult = userRepository.findByUserName(username);
+        Optional<Post> postResult = postRepository.findById(postID);
+        if (dbResult.isEmpty()) {
+            return Responses.userNotFoundResponse(username);
+        } else if (postResult.isEmpty()) {
+            return Responses.postNotFoundResponse(postID);
+        } else {
+            User user = dbResult.get();
+            user.likePost(postID);
+            JSONObject response = new JSONObject();
+            response.put(Constants.STATUS, true);
+            return response.toJSONString();
+        }
+    }
+
+
+    @PostMapping("/publish")
+    @ResponseBody
+    public String publish(@RequestParam(value = "postID", required = true) Long postID) {
+        System.out.printf("Receive get of /post/publish with {postID: %s}\n", postID);
         Optional<Post> dbResult = postRepository.findById(postID);
         if (dbResult.isEmpty()) {
             return Responses.postNotFoundResponse(postID);
         } else {
-            return JSONObject.toJSONString(dbResult.get());
+            Post post = dbResult.get();
+            Optional<User> x = userRepository.findByUserName(post.getAuthorName());
+            if (x.isEmpty()) {
+                return Responses.userNotFoundResponse(post.getAuthorName());
+            }
+            x.get().publishPost(post);
+            postRepository.save(post);
+            JSONObject response = new JSONObject();
+            response.put(Constants.STATUS, true);
+            return response.toJSONString();
         }
     }
 
