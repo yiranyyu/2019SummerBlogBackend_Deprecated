@@ -15,8 +15,19 @@ public class Date {
         this.date = date;
     }
 
+    public Date() {
+    }
+
     public static Date getNow() {
         return new Date(Calendar.getInstance());
+    }
+
+    public Calendar getDate() {
+        return date;
+    }
+
+    public void setDate(Calendar date) {
+        this.date = date;
     }
 
     @Override
