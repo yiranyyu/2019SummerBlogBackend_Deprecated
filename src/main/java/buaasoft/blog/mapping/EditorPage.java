@@ -1,11 +1,15 @@
 package buaasoft.blog.mapping;
 
+import buaasoft.blog.api.PostRepository;
 import buaasoft.blog.api.SessionRepository;
 import buaasoft.blog.api.TagRepository;
+import buaasoft.blog.api.UserRepository;
 import buaasoft.blog.entity.Post;
 import buaasoft.blog.entity.Session;
 import buaasoft.blog.entity.Tag;
+import buaasoft.blog.entity.User;
 import buaasoft.blog.utils.Constants;
+import buaasoft.blog.utils.Responses;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +23,13 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/editor")
 public class EditorPage {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
 
     @Autowired
     private SessionRepository sessionRepository;
@@ -59,4 +70,26 @@ public class EditorPage {
         response.put(Constants.STATUS, true);
         return response.toJSONString();
     }
+
+    @PostMapping("/publish")
+    @ResponseBody
+    public String publish(@RequestParam(value = "postID", required = true) Long postID) {
+        System.out.printf("Receive get of /post/publish with {postID: %s}\n", postID);
+        Optional<Post> dbResult = postRepository.findById(postID);
+        if (dbResult.isEmpty()) {
+            return Responses.postNotFoundResponse(postID);
+        } else {
+            Post post = dbResult.get();
+            Optional<User> x = userRepository.findByUserName(post.getAuthorName());
+            if (x.isEmpty()) {
+                return Responses.userNotFoundResponse(post.getAuthorName());
+            }
+            x.get().publishPost(post);
+            postRepository.save(post);
+            JSONObject response = new JSONObject();
+            response.put(Constants.STATUS, true);
+            return response.toJSONString();
+        }
+    }
+
 }

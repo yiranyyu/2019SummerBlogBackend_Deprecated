@@ -90,27 +90,6 @@ public class PostPage {
     }
 
 
-    @PostMapping("/publish")
-    @ResponseBody
-    public String publish(@RequestParam(value = "postID", required = true) Long postID) {
-        System.out.printf("Receive get of /post/publish with {postID: %s}\n", postID);
-        Optional<Post> dbResult = postRepository.findById(postID);
-        if (dbResult.isEmpty()) {
-            return Responses.postNotFoundResponse(postID);
-        } else {
-            Post post = dbResult.get();
-            Optional<User> x = userRepository.findByUserName(post.getAuthorName());
-            if (x.isEmpty()) {
-                return Responses.userNotFoundResponse(post.getAuthorName());
-            }
-            x.get().publishPost(post);
-            postRepository.save(post);
-            JSONObject response = new JSONObject();
-            response.put(Constants.STATUS, true);
-            return response.toJSONString();
-        }
-    }
-
     @GetMapping("/addComment")
     @ResponseBody
     public String addComment(@RequestParam(value = "postID") Long postID,
